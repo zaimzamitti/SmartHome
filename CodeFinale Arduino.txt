@@ -1,0 +1,84 @@
+#include <Servo.h>
+ Servo k ; 
+int angle = 70;
+const int busser= 12 ; 
+#include "dht.h" ;
+#define dht_apin A1 // Analog Pin sensor is connected to
+
+
+dht DHT;
+ float kt;
+ float kh ; 
+void setup(){
+  Serial.begin(9600);
+ 
+  pinMode(7,OUTPUT);
+  pinMode(13,OUTPUT);
+  pinMode(3,OUTPUT);
+  pinMode(busser, OUTPUT) ;
+   k.attach(9);
+   k.write(angle);
+}//end "setup()"
+ 
+void loop(){
+  //Start of Program 
+ 
+  if(Serial.available() > 0 ) 
+  {
+    char letter = Serial.read(); 
+    if( letter =='g') {
+    for(angle = 0; angle < 70; angle++)  
+  {                                  
+   k.write(angle);               
+    delay(10);                    
+    }
+    }
+    else if(letter =='h'){
+     for(angle = 70; angle > 0; angle--)    
+  {                                
+   k.write(angle);           
+    delay(10);       
+    }
+  }
+    //-----------------------------
+   else if(letter == 'a') 
+    {
+      digitalWrite(7,HIGH) ;  
+    }
+    else if( letter == 'b')
+    { 
+       digitalWrite(7,LOW);
+    }
+  //-------------------------------------------------------
+     else if(letter == 'e') 
+    {
+      digitalWrite(3,HIGH) ;  
+    }
+    else if( letter == 'f')
+    { 
+      digitalWrite(3,LOW);
+    }
+  }
+     float sensorValue = analogRead(A0);
+    String k=(String)(sensorValue);
+    if(sensorValue >= 200){
+      tone(busser , 1000);
+      digitalWrite(13, HIGH);   
+      delay(1000);                      
+      digitalWrite(13, LOW);    
+      delay(1000);
+    } 
+    else {
+      noTone(busser);
+    digitalWrite(13 , LOW) ;
+    }
+    DHT.read22(dht_apin);
+    kh = DHT.humidity ; 
+    String s=(String)(kh);
+    kt = DHT.temperature ; 
+    String ss=(String)(kt);
+    String sms =s+"*"+ss+"*"+k ; 
+    Serial.println(s+"h\n"+ss+"t\n"+k+"o");
+    delay(5000); 
+ 
+}
